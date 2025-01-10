@@ -37,14 +37,17 @@ jobs:
           path: dist/myapp-${{ matrix.goos }}-${{ matrix.goarch }}
 
   release:
-    name: Publish Release
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v3
         with:
+          name: binaries
           path: dist
+
+      - name: Debug: List dist directory
+        run: ls -al dist
 
       - name: Publish release
         uses: softprops/action-gh-release@v1
