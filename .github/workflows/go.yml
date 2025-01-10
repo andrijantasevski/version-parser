@@ -46,7 +46,7 @@ jobs:
           name: binaries
           path: dist
 
-      - name: Debug: List dist directory
+      - name: List dist directory
         run: ls -al dist
 
       - name: Publish release
