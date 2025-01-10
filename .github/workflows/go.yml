@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         goos: [linux, windows, darwin] # Platforms: Linux, Windows, macOS
-        goarch: [amd64, arm64]         # Architectures: 64-bit, ARM
+        goarch: [amd64, arm64] # Architectures: 64-bit, ARM
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -42,7 +42,7 @@ jobs:
           name: binaries # Matches the artifact name in the build job
           path: dist
 
-      - name: Debug: List dist directory
+      - name: List dist directory
         run: ls -al dist # Ensure binaries are downloaded correctly
 
       - name: Publish release
