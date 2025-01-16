@@ -16,6 +16,7 @@ var (
 	pathFlag    string
 	versionFlag string
 	direction   string
+	verbose bool
 	help string
 )
 
@@ -23,7 +24,7 @@ func init() {
 	flag.StringVar(&pathFlag, "path", "", "With the --path parameter, we can define the path to the file for parsing.\nIf you are using Windows, make sure to provide double backslashes (\\\\) or a forward slash (/).")
 	flag.StringVar(&versionFlag, "version-flag", "", "With the --version-flag parameter, we can define what flag we want to parse for.\nFor example, if we want to parse the version number from the line 'asfafasigTX10', we can use the flag 'TX'.")
 	flag.StringVar(&direction, "direction", "", "With the direction parameter, we can define the direction of the parsing. We can choose between 'min or 'max'.")
-
+	flag.BoolVar(&verbose, "verbose", false, "With the --verbose parameter, we can get more information about the parsing process.")
 	flag.Parse()
 }
 
@@ -98,8 +99,15 @@ func FindLastVersionInFile(path, versionFlag string) (int, error) {
 
 	result := make([]int, 0, len(uniqueMatches))
 
+	if verbose {
+		fmt.Println("Found the following matches:")
+	}
+
 	for match := range uniqueMatches {
-		fmt.Println(match)
+		if verbose {
+			fmt.Println(match)
+		}
+
 		versionStr := strings.TrimPrefix(match, versionFlag)
 		version, err := strconv.Atoi(versionStr)
 
@@ -120,45 +128,45 @@ func FindLastVersionInFile(path, versionFlag string) (int, error) {
 func ParseForVersion() {
 	if help != "" {
 		flag.Usage()
-		os.Exit(0)
+		os.Exit(1)
 	}
 
 	isPathValid, isPathDir := IsPathValid(pathFlag)
 
 	if !isPathValid {
-		fmt.Println("\nThe path you have provided is not valid. Please provide a valid path.\nIf you are using Windows, make sure to provide double backslashes (\\\\) or a forward slash (/).")
+		fmt.Println("The path you have provided is not valid. Please provide a valid path.\nIf you are using Windows, make sure to provide double backslashes (\\\\) or a forward slash (/).")
 		os.Exit(1)
 	}
 
 	if isPathValid && isPathDir {
-		fmt.Println("\nThe path you have provided is a directory. Please provide a valid path to a .txt file.")
+		fmt.Println("The path you have provided is a directory. Please provide a valid path to a .txt file.")
 		os.Exit(1)
 	}
 
 	if !IsFileExtensionValid(pathFlag) {
-		fmt.Println("\nThe file extension you have provided is not valid. Please provide a valid file with a .txt extension.")
+		fmt.Println("The file extension you have provided is not valid. Please provide a valid file with a .txt extension.")
 		os.Exit(1)
 	}
 
 	if versionFlag == "" {
-		fmt.Println("\nPlease provide a valid version flag.")
+		fmt.Println("Please provide a valid version flag.")
 		os.Exit(1)
 	}
 
 	direction = strings.ToLower(direction)
 	if direction != "max" && direction != "min" {
-		fmt.Println("\n Please provice a valid direction. You can choose between 'min' or 'max'.")
+		fmt.Println("Please provice a valid direction. You can choose between 'min' or 'max'.")
 		os.Exit(1)
 	}
 
-	fmt.Printf("\nParsing all instances in the .txt file with the %q version flag.", versionFlag)
+	fmt.Printf("Parsing all instances in the .txt file with the %q version flag.\n", versionFlag)
 
 	lastVersion, err := FindLastVersionInFile(pathFlag, versionFlag)
 
 	if err != nil {
-		fmt.Println("\nError:", err)
+		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
 
-	fmt.Println("\nThe last version is:", lastVersion)
+	fmt.Println("The last version is:", lastVersion)
 }
